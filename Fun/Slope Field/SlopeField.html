@@ -1,0 +1,132 @@
+<html>
+    <head> 
+        <h2 id="head"> Field Slope Generator</h2>
+    </head>
+    <!-- <style>
+        body {
+    background-color: #000000;
+}
+    </style> -->
+</html>
+<canvas id="canvas" width="800" height="800"></canvas>
+<html>
+    <head> 
+        <h2></h2>
+        <div class = "group">
+                <label>dy/dx = </label>
+                <input id="userInput" type="text" value ="hi"/>
+                <button type = "button" id ="enter">submit</button>
+        </div>
+    </head>
+</html>
+
+<style>
+  body {
+      margin: 10;
+  }
+  canvas {
+      background-color: rgba(0, 0, 0, 0.1);
+  }
+</style>
+<script src = "test.js"></script>
+<script src = "testingJquerry.js"> </script>
+<script>  
+
+
+ function drawRotatedRect(x,y,width,height,degrees, length, color){
+
+    // first save the untranslated/unrotated context
+    ctx.save();
+    
+    ctx.beginPath();
+    //set middle of plane to be [x,y]
+    ctx.translate( x+width/2, -y+height/2 );
+    //degree is negative so 0 starts on the x axis and grows counter clockwise
+    ctx.rotate(-degrees);
+    ctx.rect( -length/2, 0, length , length/10);
+    ctx.fillStyle= color;
+
+    ctx.fill();
+
+    // restore the context to its untranslated/unrotated state
+    ctx.restore();
+     
+}
+
+
+function calcDeg(curX,curY,equation){
+    let scope = {
+        x: curX,
+        y: curY
+    }
+    result = math.eval(equation,scope)
+    console.log(result);
+    // result = Math.pow(curX,3)/Math.pow(curY,3)
+    return Math.atan(result);
+}
+
+
+
+$("#enter").click(function(){
+    $("#current").text($("#default").val())
+})
+let canvas = document.getElementById('canvas')
+let ctx = canvas.getContext('2d')
+var equation = ""
+var centerX = 400;
+var centerY = 400;  
+var dilate = 40; 
+var deg = 0;
+var width = canvas.width; 
+var height = canvas.height;  
+
+ctx.fillStyle = "white"
+ctx.fillRect(0,0, 800, 800)
+ctx.fillStyle = "black"
+//make lines
+for(var i = 0; i<width; i+= dilate){
+        ctx.fillRect(i,0, 1, height)
+}
+for(var i = 0; i<height; i+= dilate){
+        ctx.fillRect(0,i, width, 1)
+}
+ctx.fillStyle = "black"
+// x and y axis
+ctx.fillRect(width/2,0-1, 3, 800)
+ctx.fillRect(0,height/2-1, 800, 3)
+// var Parser = require('expr-eval');
+// var parser = new Parser();
+$("#enter").click(function(){
+    equation = $("#userInput").val()
+    graph()
+})
+function graph(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "gray"
+    //make lines
+    for(var i = 0; i<height; i+= dilate){
+            ctx.fillRect(i,0, 1, 800)
+    }
+    for(var i = 0; i<height; i+= dilate){
+            ctx.fillRect(0,i, 800, 1)
+    }
+    ctx.fillStyle = "black"
+    // x and y axis
+    ctx.fillRect(400,0, 1, 800)
+    ctx.fillRect(0,400, 800, 1)
+    var colorList = ["red","blue","green","purple","orange"]
+    var curColor = 0;
+    for(var i = -400; i<=height; i+= dilate){
+        for(var j = -400 ; j<= width; j+= dilate){ 
+            drawRotatedRect(i,j,width,height, calcDeg(i/dilate,j/dilate,equation),dilate/2, colorList[curColor])
+            deg += 45
+        }
+        curColor += 1;
+        if(curColor == 5){
+            curColor = 0;
+        }
+    }
+}
+// drawRotatedRect(0,0,width,height, 0.785)
+
+</script>

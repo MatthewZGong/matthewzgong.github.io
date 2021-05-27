@@ -1,0 +1,312 @@
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<body>
+
+  <p id="player1P">Player1: 0%</p>
+  <p id="player2P">Player2: 0%</p>
+
+</body>
+
+<style>
+  body {
+      margin: 0;
+  }
+
+  canvas {
+      background-color: rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+  let canvas = document.getElementById('canvas')
+  let ctx = canvas.getContext('2d')
+  let P1P = document.getElementById('player1P').innerHTML = "Player1: 0%"
+  let P2P = document.getElementById('player2P').innerHTML = "Player2: 0%"
+  let score = 0;
+  class Point {
+      constructor(x, y) {
+          this.x = x
+          this.y = y
+      }
+  }
+  class heavyBullet{
+      constructor(x,y,dir,color,playerNum){
+          this.BoundingBox = new BoundingBox(x,y,20,8)
+          this.dir = dir
+          this.color = color
+          this.playerNum = playerNum
+      }
+
+  }
+  class bullet {
+      constructor(x, y, dir, color, playerNum) {
+          this.BoundingBox = new BoundingBox(x, y, 10, 3)
+          this.dir = dir
+          this.color = color
+          this.playerNum = playerNum
+      }
+  }
+  class BoundingBox {
+      constructor(x, y, width, height) {
+          this.x = x
+          this.y = y
+          this.width = width
+          this.height = height
+
+      }
+
+      draw(ctx) {
+          ctx.fillRect(this.x, this.y, this.width, this.height)
+      }
+
+      // returns true if (x,y) is in the box, false otherwise
+      isPointInside(point) {
+          let x = point.x
+          let y = point.y
+          return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height
+      }
+
+      getAllCorners() {
+          let result = []
+
+          result.push(new Point(this.x, this.y))
+          result.push(new Point(this.x + this.width, this.y))
+          result.push(new Point(this.x, this.y + this.height))
+          result.push(new Point(this.x + this.width, this.y + this.height))
+
+          return result
+      }
+
+      intersectsOther(box) {
+          let myPoints = this.getAllCorners()
+          let otherPoints = box.getAllCorners()
+
+          for (let i = 0; i < 4; i++) {
+              if (this.isPointInside(otherPoints[i])) {
+                  return true
+              }
+
+              if (box.isPointInside(myPoints[i])) {
+                  return true
+              }
+          }
+
+          return false
+      }
+  }
+  let acc = 0.5
+  var bul = [];
+  var hBul = [];
+  let p1Reset = true;
+  class player {
+      constructor(xV, yV, dir, x, y, width, height, leftNum, rightNum, upNum, downNum, shootNum, color, playerNum, percent, heavyNum) {
+          this.xV = xV
+          this.yV = yV
+          this.dir = dir
+          this.BoundingBox = new BoundingBox(x, y, width, height)
+          this.LEFT = false;
+          this.RIGHT = false;
+          this.reset = false;
+          this.leftNum = leftNum;
+          this.rightNum = rightNum;
+          this.upNum = upNum;
+          this.downNum = downNum;
+          this.shootNum = shootNum;
+          this.color = color;
+          this.playerNum = playerNum
+          this.percent = percent
+          this.stunned = false
+          this.kB = false;
+          this.kBC = 0;
+          this.kBD = 0;
+          this.heavyNum = heavyNum
+      }
+      knockBack(direction) {
+          this.kB = true;
+          this.kBC = 0;
+          this.kBD = direction
+      }
+      move() {
+          if (this.BoundingBox.y < 590 || this.reset == false) {
+              this.BoundingBox.y += this.yV
+              this.yV += acc
+              this.reset = true
+          }
+          else if (this.reset == true) {
+              this.BoundingBox.y = 590
+          }
+          if (this.stunned == false && this.kB == false) {
+              if (this.LEFT) {
+                  this.BoundingBox.x -= player1.xV;
+                  this.dir = -1;
+              }
+              if (this.RIGHT) {
+                  this.BoundingBox.x += player1.xV;
+                  this.dir = 1;
+              }
+          }
+          if (this.kB == true) {
+              this.kBC += 1
+              this.BoundingBox.x += 10 * (this.percent / 100) * this.kBD
+              if (this.kBC >= 17) {
+                  this.kB = false
+              }
+          }
+
+      }
+
+
+      attach() {
+
+          addEventListener("keyup", (event) => {
+              if (event.keyCode == this.leftNum) this.LEFT = false;
+              if (event.keyCode == this.rightNum) this.RIGHT = false;
+          })
+          addEventListener("keydown", (event) => {
+              if (event.keyCode == this.leftNum) this.LEFT = true;
+              if (event.keyCode == this.rightNum) this.RIGHT = true;
+              if (event.keyCode == this.upNum) {
+                  this.yV = -10;
+                  this.reset = false;
+              }
+              if (event.keyCode == this.downNum) {
+                  this.yV += 5
+              }
+              if(event.keyCode == this.heavyNum){
+                  hBul.push(new heavyBullet(this.BoundingBox.x, this.BoundingBox.y, this.dir, this.color, this.playerNum))
+              }
+              if (event.keyCode == this.shootNum) {
+                  bul.push(new bullet(this.BoundingBox.x, this.BoundingBox.y, this.dir, this.color, this.playerNum))
+              }
+          });
+
+
+      }
+      draw() {
+          ctx.fillStyle = this.color;
+          ctx.fillRect(this.BoundingBox.x, this.BoundingBox.y, this.BoundingBox.width, this.BoundingBox.height)
+          if(this.BoundingBox.x < -10){
+              var my_gradient = ctx.createLinearGradient(0, 0, 150, 0);
+              my_gradient.addColorStop(0, this.color);
+              my_gradient.addColorStop(1, "lightGrey");
+              ctx.fillStyle = my_gradient;
+              ctx.fillRect(0, 0, 150, 600);
+              this.BoundingBox.x = 400
+              this.BoundingBox.y = 100
+              this.percent = 0;
+          }
+          if(this.BoundingBox.x >810){
+              var my_gradient = ctx.createLinearGradient(650, 0, 800, 0);
+              my_gradient.addColorStop(0, "lightGrey");
+              my_gradient.addColorStop(1, this.color);
+              ctx.fillStyle = my_gradient;
+              ctx.fillRect(650, 0, 150, 600);
+              this.BoundingBox.x = 400
+              this.BoundingBox.y = 100
+              this.percent = 0;
+          }
+      }
+
+  }
+  let player1 = new player(5, 0, 1, 10, 10, 10, 10, 65, 68, 87, 83, 67, "#0000FF", 1, 0, 86)
+  let player2 = new player(5, 0, -1, 700, 10, 10, 10, 37, 39, 38, 40, 190, "#FF0000", 2, 0, 191)
+  player1.attach()
+  player2.attach()
+
+  function draw() {
+      player1.draw();
+      player2.draw();
+      hBul.forEach(function (item, index, array) {
+          ctx.fillStyle = item.color;
+          ctx.fillRect(item.BoundingBox.x, item.BoundingBox.y, item.BoundingBox.width, item.BoundingBox.height)
+      });
+      bul.forEach(function (item, index, array) {
+          ctx.fillStyle = item.color;
+          ctx.fillRect(item.BoundingBox.x, item.BoundingBox.y, item.BoundingBox.width, item.BoundingBox.height)
+      });
+  }
+  function update() {
+      player1.move()
+      player2.move()
+      bul.forEach(function (item, index, array) {
+          item.BoundingBox.x += 15 * item.dir
+      });
+      hBul.forEach(function (item, index, array) {
+          item.BoundingBox.x += 5 * item.dir
+      });
+      bul.forEach(function (item, index, array) {
+          if (item.BoundingBox.x > 810 || item.BoundingBox.x < -10) {
+              bul.splice(index, 1);
+          }
+          let hitDetection;
+          if (item.playerNum == 2) {
+              hitDetection = item.BoundingBox.intersectsOther(player1.BoundingBox)
+              if (hitDetection == true) {
+                  player1.percent += 5
+                  player1.knockBack(item.dir)
+                  bul.splice(index, 1);
+              }
+          }
+          else if (item.playerNum == 1) {
+              hitDetection = item.BoundingBox.intersectsOther(player2.BoundingBox)
+              if (hitDetection == true) {
+                  player2.percent += 5
+                  player2.knockBack(item.dir)
+                  bul.splice(index, 1);
+              }
+          }
+
+      });
+      hBul.forEach(function (item, index, array) {
+          if (item.BoundingBox.x > 810 || item.BoundingBox.x < -10) {
+              hBul.splice(index, 1);
+          }
+          let hitDetection;
+          if (item.playerNum == 2) {
+              hitDetection = item.BoundingBox.intersectsOther(player1.BoundingBox)
+              if (hitDetection == true) {
+                  player1.percent += 15
+                  player1.knockBack(item.dir)
+                  hBul.splice(index, 1);
+              }
+          }
+          else if (item.playerNum == 1) {
+              hitDetection = item.BoundingBox.intersectsOther(player2.BoundingBox)
+              if (hitDetection == true) {
+                  player2.percent += 15
+                  player2.knockBack(item.dir)
+                  hBul.splice(index, 1);
+              }
+          }
+
+      });
+      P1P = document.getElementById('player1P').innerHTML = "Player1: " + player1.percent + "%"
+      P2P = document.getElementById('player2P').innerHTML = "Player2: " + player2.percent + "%"
+
+  }
+
+  function clear() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+  }
+
+  function frame() {
+
+      update()
+      clear()
+      draw()
+  }
+
+
+
+
+  function onMouseMove(e) {
+  }
+  document.addEventListener('mousemove', onMouseMove)
+
+  setInterval(frame, 1000 / 60)
+</script>
+
+
+
+
+

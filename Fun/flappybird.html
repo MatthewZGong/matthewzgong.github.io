@@ -1,0 +1,217 @@
+<canvas id="canvas" width="800" height="600"></canvas>
+<body>
+
+<p id="score">Score: 0</p>
+
+</body>
+
+<style>
+    body {
+        margin: 0;
+    }
+
+    canvas {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script>
+    let canvas = document.getElementById('canvas')
+    let ctx = canvas.getContext('2d')
+	let scoreC = document.getElementById('score').innerHTML = "Score: 0"
+    let score = 0;
+    class Point {
+        constructor(x, y) {
+            this.x = x
+            this.y = y
+        }
+    }
+
+    class BoundingBox {
+        constructor(x, y, width, height) {
+            this.x = x
+            this.y = y
+            this.width = width
+            this.height = height
+        }
+
+        draw(ctx) {
+            ctx.fillRect(this.x, this.y, this.width, this.height)
+        }
+ 
+        // returns true if (x,y) is in the box, false otherwise
+        isPointInside(point) {
+            let x = point.x
+            let y = point.y
+            return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height
+        }
+
+        getAllCorners() {
+            let result = []
+
+            result.push(new Point(this.x, this.y))
+            result.push(new Point(this.x + this.width, this.y))
+            result.push(new Point(this.x, this.y + this.height))
+            result.push(new Point(this.x + this.width, this.y + this.height))
+
+            return result
+        }
+
+        intersectsOther(box) {
+            let myPoints = this.getAllCorners()
+            let otherPoints = box.getAllCorners()
+
+            for (let i = 0; i < 4; i++) {
+                if (this.isPointInside(otherPoints[i])) {
+                    return true
+                }
+
+                if (box.isPointInside(myPoints[i])) {
+                    return true
+                }
+            }
+
+            return false
+        }
+    }
+
+    let bird = {
+        xV: 0,
+        yV: 0,
+        BoundingBox: new BoundingBox(30, 30, 10, 10)
+    }
+    let acc = 0.4
+    let pipe = {
+        xV: 8,
+        yV: 0,
+        BoundingBoxBot: new BoundingBox(800, 350, 30, 250),
+        BoundingBoxTop: new BoundingBox(800, 0, 30, 250)
+    }
+    let pipe2 = {
+        xV: 8,
+        yV: 0,
+        BoundingBoxBot: new BoundingBox(800, 350, 30, 250),
+        BoundingBoxTop: new BoundingBox(800, 0, 30, 250)
+    }
+    let first = true; 
+    let hasLost = false
+ 	let pC = false;
+    let pC2 = false;
+    function draw() {
+        ctx.fillRect(bird.BoundingBox.x, bird.BoundingBox.y, bird.BoundingBox.width, bird.BoundingBox.height)
+        ctx.fillRect(pipe.BoundingBoxBot.x, pipe.BoundingBoxBot.y, pipe.BoundingBoxBot.width, pipe.BoundingBoxBot.height)
+        ctx.fillRect(pipe.BoundingBoxTop.x, pipe.BoundingBoxTop.y, pipe.BoundingBoxTop.width, pipe.BoundingBoxTop.height)
+        if(first == false){
+        	        ctx.fillRect(pipe2.BoundingBoxBot.x, pipe2.BoundingBoxBot.y, pipe2.BoundingBoxBot.width, pipe2.BoundingBoxBot.height)
+        ctx.fillRect(pipe2.BoundingBoxTop.x, pipe2.BoundingBoxTop.y, pipe2.BoundingBoxTop.width, pipe2.BoundingBoxTop.height)
+        }
+    }
+
+    function update() {
+        bird.BoundingBox.y += bird.yV
+        bird.yV += acc
+        pipe.BoundingBoxBot.x -= pipe.xV
+        pipe.BoundingBoxTop.x -= pipe.xV
+        if(first == false){
+        pipe2.BoundingBoxBot.x -= pipe2.xV
+        pipe2.BoundingBoxTop.x -= pipe2.xV
+        }
+        if(first == true && pipe.BoundingBoxBot.x < 350){ 
+        	first = false
+        }
+        if (pipe.BoundingBoxBot.x + pipe.BoundingBoxBot.width <= 0) {
+            let rand  = Math.floor(Math.random()*300)+150
+            pipe.BoundingBoxBot.y = rand
+            pipe.BoundingBoxBot.height = 600-rand
+            pipe.BoundingBoxTop.height = rand-100
+            pipe.BoundingBoxBot.x = 800 - pipe.BoundingBoxBot.width
+            pipe.BoundingBoxTop.x = 800 - pipe.BoundingBoxBot.width
+            pC = false
+        }
+        if (pipe2.BoundingBoxBot.x + pipe2.BoundingBoxBot.width <= 0) {
+            let rand  = Math.floor(Math.random()*300)+150
+            pipe2.BoundingBoxBot.y = rand
+            pipe2.BoundingBoxBot.height = 600-rand
+            pipe2.BoundingBoxTop.height = rand-100
+            pipe2.BoundingBoxBot.x = 800 - pipe2.BoundingBoxBot.width
+            pipe2.BoundingBoxTop.x = 800 - pipe2.BoundingBoxBot.width
+            pC2 = false
+        }
+        if (pipe.BoundingBoxTop.intersectsOther(bird.BoundingBox) || pipe.BoundingBoxBot.intersectsOther(bird.BoundingBox)) {
+            hasLost = true
+        }
+        if (pipe2.BoundingBoxTop.intersectsOther(bird.BoundingBox) || pipe2.BoundingBoxBot.intersectsOther(bird.BoundingBox)) {
+            hasLost = true
+        }
+        if(bird.BoundingBox.y > 620){
+            hasLost = true
+            
+        }
+        if(pipe.BoundingBoxBot.x < bird.BoundingBox.x && pC == false){ 
+            score += 1 
+            pC = true
+            scoreC = document.getElementById('score').innerHTML = "Score: "+score
+        }
+        if(pipe2.BoundingBoxBot.x < bird.BoundingBox.x && pC2 == false){ 
+            score += 1 
+            pC2= true
+            scoreC = document.getElementById('score').innerHTML = "Score: "+score
+        }
+        
+
+
+    }
+
+    function clear() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
+    function frame() {
+        if (!hasLost) {
+            update()
+            clear()
+            draw()
+        }else{
+            console.log("reee")
+            hasLost = false 
+            score = 0 
+            scoreC = document.getElementById('score').innerHTML = "Score: 0"
+            bird = {
+            xV: 0,
+            yV: 0,
+            BoundingBox: new BoundingBox(30, 30, 10, 10)
+            }
+            acc = 0.4
+            pipe = {
+                xV: 8,
+                yV: 0,
+                BoundingBoxBot: new BoundingBox(800, 350, 30, 250),
+                BoundingBoxTop: new BoundingBox(800, 0, 30, 250)
+            }
+            pipe2 = {
+                xV: 8,
+                yV: 0,
+                BoundingBoxBot: new BoundingBox(800, 350, 30, 250),
+                BoundingBoxTop: new BoundingBox(800, 0, 30, 250)
+            }
+            first = true; 
+            pC = false;
+            pC2 = false;
+        }
+    }
+
+    function onKeyDown() {
+        bird.yV = -8
+    }
+
+    function onMouseMove(e) {
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+    document.addEventListener('mousemove', onMouseMove)
+
+    setInterval(frame, 1000 / 60)
+</script>
+
+
+
