@@ -188,11 +188,6 @@ header {
 }
 
 .about-me__img {
-    box-shadow: var(--bs);
-}
-
-
-.about-me__img {
     grid-area: img;
     position: relative;
     z-index: 2;
