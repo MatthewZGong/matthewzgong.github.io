@@ -1,0 +1,245 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Custom Properties, update these for your own design */
+
+:root {
+    --ff-primary: 'Source Sans Pro', sans-serif;
+    --ff-secondary: 'Source Code Pro', monospace;
+    
+    --fw-reg: 300;
+    --fw-bold: 600;
+    
+    --clr-light: #fff;
+    --clr-dark: #303030;
+    --clr-accent: #16e0bd;
+    
+    --fs-h1: 3rem;
+    --fs-h2: 2.25rem;
+    --fs-h3: 1.25rem;
+    --fs-body: 1rem;
+    
+    --bs: 0.25em 0.25em 0.75em rgba(0,0,0,.25),
+          0.125em 0.125em 0.25em rgba(0,0,0,.15);
+}
+
+body {margin:0;}
+/* General styles */
+
+/* endable this to add smooth scrolling */
+/* html {
+    scroll-behavior: smooth;
+} */
+section{
+    margin: auto;
+    padding: 4rem 2rem;
+    width: 100%;
+}
+.navbar {
+    
+    background-color: #fff;
+    overflow: hidden;
+    position: fixed;
+    top: 0; /* Position the navbar at the top of the page */
+    width: 100%; /* Full width */
+    border-bottom: 1px solid #679;
+    z-index: 11;
+
+}
+  
+  /* Links inside the navbar */
+  .navbar a {
+    float: left;
+    display: block;
+    color: #303030;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  /* Change background on mouse-over */
+  .navbar a:hover {
+    background: #f2f2f2;
+    color: black;
+  }
+  
+  /* Main content */
+.main {
+    padding: 16px;
+    margin-top: 30px;
+    height: 1500px; 
+}
+body {
+    background: var(--clr-light);
+    color: var(--clr-dark);
+    margin: 0;
+    font-family: var(--ff-primary);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+}
+
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+
+/* Typography */
+
+h1,h2,h3 {
+    line-height: 1;
+    margin: 0;
+}
+
+h1 { font-size: var(--fs-h1) }
+h2 { font-size: var(--fs-h2) }
+h3 { font-size: var(--fs-h3) }
+
+
+.section__title {
+    margin-bottom: .25em;
+}
+
+.section__title--intro {
+    font-weight: var(--fw-reg);
+}
+
+.section__title--intro strong {
+    display: block;
+}
+
+.section__subtitle {
+    margin: 0;
+    font-size: var(--fs-h3);
+}
+
+.section__subtitle--intro,
+.section__subtitle--about {
+    background: var(--clr-accent);
+    padding: .25em 1em;
+    font-family: var(--ff-secondary);
+    margin-bottom: 1em;
+}
+
+.section__subtitle--work {
+    color: var(--clr-accent);
+    font-weight: var(--fw-bold);
+    margin-bottom: 2em;
+}
+
+/* header */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+}
+
+.logo {
+    max-width: 100px;
+}
+
+
+
+.nav{
+    position: relative;
+}
+
+
+.intro {
+    position: relative;
+}
+
+.intro__img {
+    box-shadow: var(--bs);
+}
+
+.section__subtitle--intro {
+    display: inline-block;
+}
+
+
+.intro {
+    display: grid;
+    width: min-content;
+    margin: 0 auto;
+    grid-column-gap: 1em;
+    grid-template-areas: 
+        "img title"
+        "img subtitle";
+    grid-template-columns: min-content max-content;
+}
+
+.intro__img {
+    
+
+    max-width: 500px;
+    max-height: 500px;
+    position: relative;
+}    
+
+
+
+
+.about-me {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.about-me__img {
+    grid-area: img;
+    position: relative;
+    z-index: 2;
+}
+.about-me {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    grid-template-areas: 
+        "title img"
+        "subtitle img"
+        "text img";
+    grid-column-gap: 2em;
+}
+
+.section__title--about {
+    grid-area: title;
+}
+
+.section__subtitle--about {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    position: relative;
+    left: -1em;
+    width: calc(100% + 2em);
+
+    padding-left: 1em;
+    padding-right: calc(200px + 4em);
+}
+
+.Project-Title{
+    grid-area: title;
+    background: var(--clr-accent);
+    padding: .25em 1em;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    position: relative;
+
+}
+.Project{ 
+    margin: 0 auto;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1fr;
+
+    padding-bottom: 2em; 
+}
+.Project-Description{ 
+    grid-row: 2; 
+    
+}
+    
+/* My Work */

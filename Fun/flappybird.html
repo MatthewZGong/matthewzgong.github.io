@@ -143,7 +143,7 @@
         if (pipe2.BoundingBoxTop.intersectsOther(bird.BoundingBox) || pipe2.BoundingBoxBot.intersectsOther(bird.BoundingBox)) {
             hasLost = true
         }
-        if(bird.BoundingBox.y > 620){
+        if(bird.BoundingBox.y > 620 || bird.BoundingBox.y < -10){
             hasLost = true
             
         }
