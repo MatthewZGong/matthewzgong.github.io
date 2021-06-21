@@ -49,7 +49,10 @@ section{
     z-index: 11;
 
 }
-  
+
+.navbar h2{
+    padding: 10px
+}
   /* Links inside the navbar */
   .navbar a {
     float: left;
