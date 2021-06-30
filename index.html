@@ -11,15 +11,15 @@
 
     </head>
 
-
+    
     <body>
-        <div class="nav">
+        <div class="nav" id = "Home">
             <header>
                 <div class="navbar">
                     <h2>Matthew Gong</h2>
-                    <a href="index.html">Home</a>
-                    <a href="Projects.html">Projects</a>
-                    <a href="Fun.html">Fun</a>
+                    <a onclick="goTo('#home')">Home</a>
+                    <a onclick="goTo('#Games')">Games</a>
+                    <a onclick="goTo('#Projects')">Projects</a>
                     <a href="Resume/Resume_Matthew_Gong.pdf">Resume</a>
                 </div>
     
@@ -44,9 +44,81 @@
             </article>
             
         </div>
+        <div id = "Games">
+            <article class = "About">
+                <h2 class="About-Title">Games</h2>    
+            </article>
+            <article class = "Project">
+                <h3 class = "Project-Title">
+                    <a href="Fun/FakeSmash.html" style="color:#303030" >Bootleg Smash</a>
+                </h3>
+                <p class = "Project-Description"> A two player WebApp fighting game. <br> Player 1 WASD "c" and "v" to shoot <br> Player 2 Arrow keys "." and "/" to shoot  </p>
+            </article>
+            <article class = "Project">
+                <h3 class = "Project-Title">
+                    <a href="Fun/flappybird.html" style="color:#303030" >Bootleg Flappy Birds </a>
+                </h3>
+                <p class = "Project-Description"> A WebApp based on the game flappy bird. Press any key to Jump</p>
 
-        
-        
+            </article>
+            <article class = "Project">
+                <h3 class = "Project-Title">
+                    <a href="Fun/Slope Field/SlopeField.html" style="color:#303030" >Slope Field Calculator </a>
+                </h3>
+                <p class = "Project-Description"> A Slope Field Calculator I created for my math teacher</p>
+
+            </article>
+            <article class = "Project">
+                <h3 class = "Project-Title">
+                    <a href="Snake/Index.html" style="color:#303030" >SnakeAI </a>
+                </h3>
+                <p class = "Project-Description"> A WebApp program for the popular and old game "Snake".
+                    The game explores and shows different AI methods for controling the in-game Snake. The main AI used is a Q-Learning reinforcment algorithm.
+                    Users can also choose to play the game by using arrow keys. </p>
+    
+    
+            </article>
+        </div>
+        <div id = "Projects">
+            <article class = "About">
+                <h2 class="About-Title">Projects</h2>    
+            </article>
+            <article class = "Project">
+                <h3 class = "Project-Title">
+                    <a href="https://github.com/zak-cole/shouldidodgegg" style="color:#303030" >ShouldIDodge </a>
+                </h3>
+                <p class = "Project-Description"> A Java application made for the game League of Legends. 
+                    League of Legends is known as a toxic game. Many players are known for trolling their own teammates. This app analyzes teammate history to predict if one should "dodge" a lobby. The results of the analysis is based on a set of heuristics that determines the likeness of a teammate being a troll.</p>
+    
+    
+            </article>
+            <article class = "Project">
+                <h3 class = "Project-Title">
+                    <a href="https://github.com/therealestkevin/PictoWar" style="color:#303030" >PictoWar </a>
+                </h3>
+                <p class = "Project-Description">An Android game created for the use of two phones. Players first take a picture of their own face and then through the use of Bluetooth players will connect with each other phones. The goal of the game is to be the first person to take the picture of the other player.</p>
+            </article>
+    
+            <article class = "Project">
+                <h3 class = "Project-Title">
+                    <a href="https://github.com/Hacklodge18/AppSampler" style="color:#303030" >AppSampler </a>
+                </h3>
+                <p class = "Project-Description"> An Android application that lets users sample different game applications. Lots of people like to browse the app store and download many different small phone games. 
+                    The person will play the game for a few times and stop. Usually people will forget about the application and leave it on their phone without uninstalling. This app gives its users a range of random games for people to try out and once they are done playing the app will unisntall the game.  </p>
+    
+            </article>
+        </div>
     </body>
 </html>
+<script>
+function goTo(id) {
+    let destination = document.querySelector(id);
+    let yCoord = destination.offsetTop - 100;
+    window.scrollTo({
+      top: yCoord,
+      behavior: "smooth"
+    });
+  }
+
+</script>
 
